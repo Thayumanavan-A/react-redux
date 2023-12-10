@@ -1,4 +1,5 @@
 import { createSlice,createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
 
 const initialState = {
     tasksList:[],
@@ -10,15 +11,11 @@ const initialState = {
 //GET
 export const getTasksFromServer = createAsyncThunk(
     "tasks/getTasksFromServer",
-    async (_,{rejectWithValue}) => {
-        const response = await fetch('http://localhost:8000/tasks')
-        if (response.ok) {
-            const jsonResponse = await response.json()
-            return jsonResponse
-        } else {
-            return rejectWithValue({error:'No Tasks Found'})
-        }
-    }
+     async(_,{rejectWithValue}) => {
+      return  axios.get('http://localhost:8000/task')
+        .then(res => res.data)
+        .catch(() => rejectWithValue({error:'No Tasks Found'}))    
+           }
 )
 
 const tasksSlice = createSlice({
