@@ -12,7 +12,7 @@ const initialState = {
 export const getTasksFromServer = createAsyncThunk(
     "tasks/getTasksFromServer",
      async(_,{rejectWithValue}) => {
-      return  axios.get('http://localhost:8000/task')
+      return  axios.get('http://localhost:8000/tasks')
         .then(res => res.data)
         .catch(() => rejectWithValue({error:'No Tasks Found'}))    
            }
