@@ -1,4 +1,5 @@
 import { createSlice,createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
 
 const initialState = {
     tasksList:[],
@@ -12,39 +13,39 @@ const BASE_URL = 'http://localhost:8000/tasks'
 //GET
 export const getTasksFromServer = createAsyncThunk(
     "tasks/getTasksFromServer",
-    async (_,{rejectWithValue}) => {
-        const response = await fetch(BASE_URL)
-        if (response.ok) {
-            const jsonResponse = await response.json()
-            return jsonResponse
-        } else {
-            return rejectWithValue({error:'No Tasks Found'})
-        }
-    }
+     async(_,{rejectWithValue}) => {
+      return  axios.get(BASE_URL)
+        .then(res => res.data)
+        .catch(() => rejectWithValue({error:'No Tasks Found'}))    
+           }
 )
 
 //POST 
 export const addTaskToServer = createAsyncThunk(
     "tasks/addTaskToServer",
     async (task,{rejectWithValue}) => {
-        const options = {
-            method:'POST',
-            body: JSON.stringify(task),
-            headers: {
-                "Content-type":"application/json; charset=UTF-8"
-            }
-        }
-        const response = await fetch(BASE_URL,options)
-        if (response.ok) {
-            const jsonResponse = await response.json()
-            return jsonResponse
-        } else {
-            return rejectWithValue({error:'Task Not Added'})
-        }
+        return axios.post(BASE_URL,task)
+               .then(res => res.data)
+               .catch(() => rejectWithValue({error:'No Tasks Found'}))  
+        // const options = {
+        //     method:'POST',
+        //     body: JSON.stringify(task),
+        //     headers: {
+        //         "Content-type":"application/json; charset=UTF-8"
+        //     }
+        // }
+        // const response = await fetch(BASE_URL,options)
+        // if (response.ok) {
+        //     const jsonResponse = await response.json()
+        //     return jsonResponse
+        // } else {
+        //     return rejectWithValue({error:'Task Not Added'})
+        // }
     }
 )
 
 const tasksSlice = createSlice({
+
     name:'tasksSlice',
     initialState,
     reducers: {
