@@ -51,7 +51,7 @@ const tasksSlice = createSlice({
     reducers: {
         addTaskToList:(state,action) => {
             const id = Math.random() * 100
-            let task = {...action.payload,id}
+            let task = {id,...action.payload}
             state.tasksList.push(task)
         },
         removeTaskFromList:(state,action) => {
