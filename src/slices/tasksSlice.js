@@ -1,5 +1,5 @@
 import { createSlice,createAsyncThunk } from "@reduxjs/toolkit";
-
+import axios from 'axios';
 const initialState = {
     tasksList:[],
     selectedTask:{},
@@ -12,35 +12,20 @@ const BASE_URL = 'http://localhost:8000/tasks'
 //GET
 export const getTasksFromServer = createAsyncThunk(
     "tasks/getTasksFromServer",
-    async (_,{rejectWithValue}) => {
-        const response = await fetch(BASE_URL)
-        if (response.ok) {
-            const jsonResponse = await response.json()
-            return jsonResponse
-        } else {
-            return rejectWithValue({error:'No Tasks Found'})
-        }
-    }
+     async(_,{rejectWithValue}) => {
+      return  axios.get(BASE_URL)
+        .then(res => res.data)
+        .catch(() => rejectWithValue({error:'No Tasks Found'}))    
+           }
 )
 
 //POST 
 export const addTaskToServer = createAsyncThunk(
     "tasks/addTaskToServer",
     async (task,{rejectWithValue}) => {
-        const options = {
-            method:'POST',
-            body: JSON.stringify(task),
-            headers: {
-                "Content-type":"application/json; charset=UTF-8"
-            }
-        }
-        const response = await fetch(BASE_URL,options)
-        if (response.ok) {
-            const jsonResponse = await response.json()
-            return jsonResponse
-        } else {
-            return rejectWithValue({error:'Task Not Added'})
-        }
+        return axios.post(BASE_URL,task)
+               .then(res => res.data)
+               .catch(() => rejectWithValue({error:'No Tasks added'}))  
     }
 )
 
@@ -48,20 +33,9 @@ export const addTaskToServer = createAsyncThunk(
 export const updateTaskInServer = createAsyncThunk(
     "tasks/updateTaskInServer",
     async (task,{rejectWithValue}) => {
-        const options = {
-            method:'PATCH',
-            body: JSON.stringify(task),
-            headers: {
-                "Content-type":"application/json; charset=UTF-8"
-            }
-        }
-        const response = await fetch(BASE_URL + '/' + task.id,options)
-        if (response.ok) {
-            const jsonResponse = await response.json()
-            return jsonResponse
-        } else {
-            return rejectWithValue({error:'Task Not Updated'})
-        }
+        return axios.patch(`${BASE_URL}/${task.id}`,task)
+               .then(res => res.data)
+               .catch(()=> rejectWithValue({error:'No Tasks updated'}))
     }
 )
 
@@ -69,16 +43,9 @@ export const updateTaskInServer = createAsyncThunk(
 export const deleteTaskFromServer = createAsyncThunk(
     "tasks/deleteTaskFromServer",
     async (task,{rejectWithValue}) => {
-        const options = {
-            method:'DELETE',
-        }
-        const response = await fetch(BASE_URL + '/' + task.id,options)
-        if (response.ok) {
-            const jsonResponse = await response.json()
-            return jsonResponse
-        } else {
-            return rejectWithValue({error:'Task Not Deleted'})
-        }
+         return axios.delete(`${BASE_URL}/${task.id}`)
+                .then(res => res.data)
+                .catch(()=> rejectWithValue({error:"No Tasks deleted"}))
     }
 )
 
